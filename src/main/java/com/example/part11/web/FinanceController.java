@@ -16,6 +16,11 @@ public class FinanceController {
 
     private final FinanceService financeService;
 
+    /**
+     * 회사명에 따른 배당금 조회
+     * @param companyName
+     * @return
+     */
     @GetMapping("/dividend/{companyName}")
     public ResponseEntity<?> searchFinance(@PathVariable String companyName) {
         var result = this.financeService.getDividendByCompanyName(companyName);

@@ -5,6 +5,7 @@ import com.example.part11.persist.entity.CompanyEntity;
 import com.example.part11.service.CompanyService;
 import io.netty.util.internal.ObjectUtil;
 import lombok.AllArgsConstructor;
+import lombok.var;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,26 @@ import java.util.List;
 public class CompanyController {
     private final CompanyService companyService;
 
+    /**
+     * 자동 완성
+     * @param keyword
+     * @return
+     */
+    // 방법 1
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        var result = this.companyService.autocomplete(keyword);
+
+        return ResponseEntity.ok(result);
     }
+
+    // 방법 2
+//    @GetMapping("/autocomplete")
+//    public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
+//        var result = this.companyService.getCompanyNamesByKeyword(keyword);
+//
+//        return ResponseEntity.ok(result);
+//    }
 
     /**
      * 회사 목록 조회
@@ -47,6 +64,7 @@ public class CompanyController {
             throw new RuntimeException("ticker is empty");
         }
         Company company = this.companyService.save(ticker);
+        this.companyService.addAutocompleteKeyword(company.getName());
 
         return ResponseEntity.ok(company);
     }
