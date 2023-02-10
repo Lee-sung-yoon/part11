@@ -8,6 +8,7 @@ import com.example.part11.persist.entity.CompanyEntity;
 import com.example.part11.persist.entity.DividendEntity;
 import com.example.part11.scraper.Scraper;
 import lombok.AllArgsConstructor;
+import lombok.var;
 import org.apache.commons.collections4.Trie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -78,5 +79,16 @@ public class CompanyService {
 
     public void deleteAutocompleteKeyword(String keyword) {
         this.trie.remove(keyword);
+    }
+
+    public String deleteCompany(String ticker) {
+        var company = this.companyRepository.findByTicker(ticker)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회사입니다."));
+
+        this.dividendRepository.deleteAllByCompanyId(company.getId());
+        this.companyRepository.delete(company);
+
+        this.deleteAutocompleteKeyword(company.getName());
+        return company.getName();
     }
 }
